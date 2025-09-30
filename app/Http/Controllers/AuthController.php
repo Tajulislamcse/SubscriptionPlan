@@ -35,7 +35,7 @@ class AuthController extends Controller
     }
     public function showLoginForm()
     {
-        if (auth()->check()) {
+        if (Auth::check()) {
             return redirect()->route('dashboard');
         }
         return view('auth.login');
@@ -112,7 +112,7 @@ class AuthController extends Controller
 
         $latestOtp->delete();
 
-        return redirect()->route('dashboard')->with('success', 'Login successful');
+        return redirect()->route('dashboard');
     }
     public function logout(Request $request)
     {
