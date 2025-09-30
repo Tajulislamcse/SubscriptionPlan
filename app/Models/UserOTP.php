@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserOTP extends Model
 {
-    //
+     protected $fillable = ['user_id', 'otp', 'expires_at'];
 }

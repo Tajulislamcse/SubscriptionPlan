@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 use App\Models\User;
+use App\Mail\LoginOTPMail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
+use App\Models\UserOTP;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -45,6 +48,66 @@ class AuthController extends Controller
             $user->markEmailAsVerified();
         }
         return redirect('/login')->with('verified', 'Your email has been successfully verified!');
+    }
+    public function login(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+        if (Auth::attempt($credentials)) {
+            $user = User::where('email', $request->email)->first();
+
+            $otp = rand(100000, 999999);
+
+            UserOTP::create([
+                'user_id' => $user->id,
+                'otp' => $otp,
+                'expires_at' => now()->addMinutes(5),
+            ]);
+
+            Mail::to($user->email)->send(new LoginOTPMail($otp, $user));
+            session(['email' => $user->email]);
+            return redirect()->route('otp.verify.form');
+        }else{
+            return back()->with('error', 'Invalid email or password');
+        }
+
+    }
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'otp'   => 'required|numeric',
+        ]);
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return back()->with('error', 'User not found.');
+        }
+        $latestOtp = UserOTP::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if (!$latestOtp) {
+            return back()->with('error', 'OTP not found.');
+        }
+
+        if ($latestOtp->otp !== $request->otp) {
+            return back()->with('error', 'Invalid OTP.');
+        }
+
+       if ($latestOtp->expires_at < now()) {
+            return back()->with('error', 'OTP has expired.');
+        }
+
+        Auth::login($user);
+
+        $latestOtp->delete();
+
+        return redirect()->route('dashboard')->with('success', 'Login successful');
+    }
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login');
     }
 
 }

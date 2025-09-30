@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('user_o_t_p_s', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->string('token');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('otp');
             $table->timestamp('expires_at');
             $table->timestamps();
         });
