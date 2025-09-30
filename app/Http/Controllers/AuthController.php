@@ -51,10 +51,17 @@ class AuthController extends Controller
     }
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
-        if (Auth::attempt($credentials)) {
-            $user = User::where('email', $request->email)->first();
+        $loginField = filter_var($request->input('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
 
+            $credentials = [
+                $loginField => $request->input('email'),
+                'password' => $request->password,
+            ];
+        if (Auth::attempt($credentials)) {
+            $user = User::where($loginField, $request->email)->first();
+            if (! $user->hasVerifiedEmail()) {
+                return back()->with('error', 'Please verify your email before logging in.');
+             }
             $otp = rand(100000, 999999);
 
             UserOTP::create([
@@ -67,7 +74,10 @@ class AuthController extends Controller
             session(['email' => $user->email]);
             return redirect()->route('otp.verify.form');
         }else{
-            return back()->with('error', 'Invalid email or password');
+            return back()
+            ->withInput($request->only('email'))
+            ->with('error', 'Invalid email or password');
+
         }
 
     }

@@ -156,6 +156,7 @@
                     class="form-control"
                     id="email"
                     name="email"
+                    value="{{ old('email') }}"
                     placeholder="Enter your email or username"
                     autofocus
                   />
