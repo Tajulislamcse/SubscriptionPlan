@@ -44,7 +44,7 @@ class AuthController extends Controller
         if (! $user->hasVerifiedEmail()) {
             $user->markEmailAsVerified();
         }
-        return redirect('/login')->with('verified', true);
+        return redirect('/login')->with('verified', 'Your email has been successfully verified!');
     }
 
 }

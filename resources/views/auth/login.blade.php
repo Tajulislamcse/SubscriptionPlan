@@ -137,7 +137,11 @@
               <!-- /Logo -->
               <h4 class="mb-2">Welcome to Tdevs! 👋</h4>
               <p class="mb-4">Please sign-in to your account and start the adventure</p>
-
+              @if(session('verified'))
+                  <div class="alert alert-success">
+                      {{ session('verified') }}
+                  </div>
+              @endif
               <form id="formAuthentication" class="mb-3" action="index.html" method="POST">
                 <div class="mb-3">
                   <label for="email" class="form-label">Email or Username</label>
