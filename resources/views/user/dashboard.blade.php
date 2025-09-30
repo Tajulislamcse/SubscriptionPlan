@@ -186,7 +186,7 @@
                         </div>
                         <div class="flex-grow-1">
                           <span class="fw-semibold d-block">{{ auth()->user()->name ?? 'John Doe' }}</span>
-                          <small class="text-muted">Admin</small>
+                          <small class="text-muted">User</small>
                         </div>
                       </div>
                     </a>

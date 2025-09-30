@@ -17,7 +17,7 @@ class AuthController extends Controller
 {
       public function showRegisterForm()
     {
-        return view('auth.register');
+        return view('user.register');
     }
     public function register(RegisterRequest $request)
     {
@@ -38,7 +38,14 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect()->route('dashboard');
         }
-        return view('auth.login');
+        return view('user.login');
+    }
+     public function showAdminLoginForm()
+    {
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
+        return view('admin.login');
     }
     public function emailVerify($id, $hash)
     {
@@ -53,6 +60,10 @@ class AuthController extends Controller
     }
     public function login(Request $request)
     {
+        $request->validate([
+            'email' => 'required|string',
+            'password' => 'required|string',
+        ]);
         $loginField = filter_var($request->input('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
 
             $credentials = [
@@ -83,6 +94,28 @@ class AuthController extends Controller
         }
 
     }
+    public function adminLogin(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|string',
+            'password' => 'required|string',
+        ]);
+        $loginField = filter_var($request->input('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
+
+        $credentials = [
+            $loginField => $request->input('email'),
+            'password' => $request->password,
+        ];
+
+        if (Auth::guard('admin')->attempt($credentials)) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return back()
+            ->withInput($request->only('email'))
+            ->with('error', 'Invalid email or password');
+    }
+
     public function verifyOtp(Request $request)
     {
         $request->validate([
