@@ -19,10 +19,11 @@ Route::get('/otp/verify', function () {
 })->name('otp.verify.form');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::post('/otp/verify', [AuthController::class, 'verifyOtp'])->name('otp.verify');
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/data', [DataController::class, 'index'])->name('data');
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::group(['middleware' => ['auth', 'prevent-back-history', 'verified']], function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
 
 

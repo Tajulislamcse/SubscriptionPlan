@@ -35,7 +35,9 @@ class AuthController extends Controller
     }
     public function showLoginForm()
     {
-    
+        if (auth()->check()) {
+            return redirect()->route('dashboard');
+        }
         return view('auth.login');
     }
     public function emailVerify($id, $hash)

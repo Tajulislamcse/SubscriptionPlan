@@ -134,12 +134,13 @@
                 <div class="mb-3">
                   <label for="otp" class="form-label">OTP Code</label>
                   <input
-                    type="text"
+                    type="number"
                     class="form-control"
                     id="otp"
                     name="otp"
                     placeholder="Enter OTP"
                     autofocus
+                    required
                   />
                 </div>
                 <button class="btn btn-primary d-grid w-100">Submit Now</button>
