@@ -81,17 +81,22 @@ class AuthController extends Controller
             'email' => 'required|string',
             'password' => 'required|string',
         ]);
+
         $loginField = filter_var($request->input('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
 
-            $credentials = [
-                $loginField => $request->input('email'),
-                'password' => $request->password,
-            ];
-        if (Auth::attempt($credentials)) {
+        $credentials = [
+            $loginField => $request->input('email'),
+            'password' => $request->password,
+        ];
+
+        // check only, but DON'T log in
+        if (Auth::validate($credentials)) {
             $user = User::where($loginField, $request->email)->first();
-            if (! $user->hasVerifiedEmail()) {
+
+            if (!$user->hasVerifiedEmail()) {
                 return back()->with('error', 'Please verify your email before logging in.');
-             }
+            }
+
             $otp = rand(100000, 999999);
 
             UserOTP::create([
@@ -101,16 +106,16 @@ class AuthController extends Controller
             ]);
 
             Mail::to($user->email)->send(new LoginOTPMail($otp, $user));
+
+            // keep only email in session until OTP verified
             session(['email' => $user->email]);
+
             return redirect()->route('otp.verify.form');
-        }else{
-            return back()
-            ->withInput()
-            ->with('error', 'Invalid email or password');
-
+        } else {
+            return back()->withInput()->with('error', 'Invalid email or password');
         }
-
     }
+
     public function adminLogin(Request $request)
     {
         $request->validate([

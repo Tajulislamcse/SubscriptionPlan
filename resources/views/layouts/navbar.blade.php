@@ -25,7 +25,9 @@
                 </div>
                 <div class="flex-grow-1">
                   <span class="fw-semibold d-block">{{ auth()->user()->name ?? 'John Doe' }}</span>
+                  @if(isAdmin())
                   <small class="text-muted">Admin</small>
+                  @endif
                 </div>
               </div>
             </a>
