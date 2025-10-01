@@ -20,6 +20,13 @@
         <div>Manage Plan</div>
       </a>
     </li>
+    <li class="menu-item {{ request()->routeIs('admin.settings.index') ? 'active' : '' }}">
+      <a href="{{ route('admin.settings.index') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-data"></i>
+        <div>Settings</div>
+      </a>
+    </li>
+
     <li class="menu-item">
       <a href="{{ route('logout') }}" class="menu-link"
          onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

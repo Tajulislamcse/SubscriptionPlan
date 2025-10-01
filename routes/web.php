@@ -3,12 +3,13 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\PlanController;
-use App\Http\Controllers\SubscriptionController;
-use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\DataController;
+use App\Http\Controllers\PlanController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SubscriptionController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -35,6 +36,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Admin login routes
     Route::get('/login', [AuthController::class, 'showAdminLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'adminLogin'])->name('login.submit');
+    Route::resource('settings', SettingsController::class)->only(['index', 'store']);
 
     // Protected admin routes
     Route::middleware(['auth:admin', 'prevent-back-history'])->group(function () {
