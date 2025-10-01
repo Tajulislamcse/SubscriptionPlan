@@ -25,7 +25,8 @@ Route::get('/otp/verify', function () {
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::post('/otp/verify', [AuthController::class, 'verifyOtp'])->name('otp.verify');
 Route::get('/data', [DataController::class, 'index'])->name('data');
-Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+Route::get('/checkout/{plan}', [CheckoutController::class, 'index'])->name('checkout');
+Route::get('/checkout/process/{plan}', [CheckoutController::class, 'process'])->name('checkout.process');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::group(['middleware' => ['auth', 'prevent-back-history', 'verified']], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -34,7 +35,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Admin login routes
     Route::get('/login', [AuthController::class, 'showAdminLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'adminLogin'])->name('login.submit');
-    
+
     // Protected admin routes
     Route::middleware(['auth:admin', 'prevent-back-history'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

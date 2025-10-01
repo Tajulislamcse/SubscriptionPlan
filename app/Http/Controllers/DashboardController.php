@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Plan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,7 @@ class DashboardController extends Controller
             $userPlans = $user->plans()->withPivot('start_date', 'end_date', 'status')->get();
             return view('user.dashboard', compact('userPlans'));
         } else {
-            $allPlans = \App\Models\Plan::all();
+            $allPlans = Plan::where('is_active', 1)->get();
         }
         return view('user.dashboard', compact('allPlans'));
     }
