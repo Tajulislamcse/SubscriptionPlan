@@ -40,7 +40,7 @@ public function createCheckoutSession(Request $request)
             'phone' => $request->phone ?? '',
             'address' => $request->address ?? '',
         ],
-        'return_url' => route('thank-you') . '?session_id={CHECKOUT_SESSION_ID}',
+        'return_url' => route('subscription') . '?session_id={CHECKOUT_SESSION_ID}',
     ]);
 
     return response()->json([
@@ -50,7 +50,7 @@ public function createCheckoutSession(Request $request)
 
 
 
-public function success(Request $request)
+public function subscribe(Request $request)
 {
     $sessionId = $request->query('session_id');
 
@@ -78,8 +78,8 @@ public function success(Request $request)
                 Subscription::create([
                     'user_id' => $user->id,
                     'plan_id' => $plan->id,
-                    'starts_at' => now(),
-                    'ends_at' => now()->addDays($plan->duration_days),
+                    'start_at' => now(),
+                    'end_at' => now()->addDays($plan->duration_days),
                     'status' => 'active',
                     'gateway_response' => json_encode($session), // store Stripe session info
                 ]);

@@ -30,7 +30,7 @@ Route::post('/otp/verify', [AuthController::class, 'verifyOtp'])->name('otp.veri
 Route::get('/checkout/{plan}', [CheckoutController::class, 'index'])->name('checkout');
 Route::get('/checkout/process/{plan}', [CheckoutController::class, 'process'])->name('checkout.process');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('thank-you', [CheckoutController::class, 'success'])->name('thank-you');
+Route::get('/subscription', [CheckoutController::class, 'subscribe'])->name('subscription');
 Route::group(['middleware' => ['auth', 'prevent-back-history', 'verified']], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/create-checkout-session', [CheckoutController::class, 'createCheckoutSession'])->name('stripe.create_session');

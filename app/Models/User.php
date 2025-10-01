@@ -62,7 +62,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function plans()
     {
         return $this->belongsToMany(Plan::class, 'subscriptions')
-                    ->withPivot(['starts_at','ends_at','status','gateway_response'])
+                    ->withPivot(['start_at','end_at','status','gateway_response'])
                     ->withTimestamps();
     }
 
