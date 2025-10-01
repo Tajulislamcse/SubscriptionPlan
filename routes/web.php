@@ -4,7 +4,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\PlanController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\DataController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -35,6 +39,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware(['auth:admin', 'prevent-back-history'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/users', [AdminController::class, 'users'])->name('users.index');
+        Route::resource('plans', PlanController::class);
         Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
         Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
     });
