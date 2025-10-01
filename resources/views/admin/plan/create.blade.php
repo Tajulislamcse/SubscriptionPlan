@@ -25,7 +25,7 @@
                             {{ session('success') }}
                         </div>
                     @endif
-                    <form action="{{ route('admin.plans.store') }}" method="POST">
+                    <form action="{{ route('admin.plans.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="mb-3 row">
@@ -33,6 +33,30 @@
                             <div class="col-md-10">
                                 <input type="text" class="form-control" id="name" name="name"
                                     value="{{ old('name') }}" placeholder="Enter plan name" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label for="image" class="col-md-2 col-form-label">Plan Image</label>
+                            <div class="col-md-10">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        {{-- Default preview placeholder --}}
+                                        <img id="plan_preview" src="{{ asset('assets/img/default.png') }}" width="120" class="border rounded">
+                                    </div>
+                                    <div class="col-md-7">
+                                        <button type="button" class="btn btn-info mt-2"
+                                                onclick="document.getElementById('image').click();">
+                                            <i class="fas fa-upload"></i> Select Image
+                                        </button>
+                                        <input type="file" accept="image/*" name="image" id="image"
+                                               onchange="showImage(event, 'plan_preview')" style="display: none;">
+
+                                        @if($errors->has('image'))
+                                            <div class="text-danger mt-2">{{ $errors->first('image') }}</div>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -85,3 +109,12 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    var showImage = function(event, targetId) {
+        var image = document.getElementById(targetId);
+        image.src = URL.createObjectURL(event.target.files[0]);
+    };
+</script>
+@endpush

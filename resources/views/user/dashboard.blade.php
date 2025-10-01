@@ -128,7 +128,7 @@
             </a>
           </li>
           <li class="menu-item">
-            <a href="{{ route('logout') }}" class="menu-link" 
+            <a href="{{ route('logout') }}" class="menu-link"
                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
               <i class="menu-icon tf-icons bx bx-power-off"></i>
               <div data-i18n="Analytics">Logout</div>
@@ -216,51 +216,26 @@
 
           <div class="container-xxl flex-grow-1 container-p-y">
 
-            <!-- Examples -->
-            <div class="row mb-5">
-              <div class="col-md-6 col-lg-4 mb-3">
-                <div class="card h-100">
-                  <img class="card-img-top" src="{{ asset('assets/img/elements/2.jpg') }}" alt="Card image cap" />
-                  <div class="card-body">
-                    <h5 class="card-title">Basic Plan</h5>
-                    <p class="card-text">
-                      5 peoples of data
-                    </p>
-                    <a href="{{ route('checkout') }}" class="btn btn-outline-primary"><i
-                        class="tf-icons bx bx-cart-alt me-1"></i>Subscribe Now</a> <span
-                      style="float: right; font-size: 20px; font-weight: 700;">$50</span>
-                  </div>
+            @if(isset($allPlans))
+                <div class="row mb-5">
+                    @foreach($allPlans as $plan)
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card h-100">
+                            <img class="card-img-top" src="{{ asset('assets/img/elements/2.jpg') }}" alt="Card image cap" />
+                            <div class="card-body">
+                                <h5 class="card-title">{{ $plan->name }} Plan</h5>
+                                <p class="card-text">{{ $plan->data_limit }} peoples of data</p>
+                                <a href="{{ route('checkout', $plan->id) }}" class="btn btn-outline-primary">
+                                    <i class="tf-icons bx bx-cart-alt me-1"></i>Subscribe Now
+                                </a>
+                                <span style="float: right; font-size: 20px; font-weight: 700;">${{ $plan->price }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
                 </div>
-              </div>
-              <div class="col-md-6 col-lg-4 mb-3">
-                <div class="card h-100">
-                  <img class="card-img-top" src="{{ asset('assets/img/elements/5.jpg') }}" alt="Card image cap" />
-                  <div class="card-body">
-                    <h5 class="card-title">Gold Plan</h5>
-                    <p class="card-text">
-                      10 peoples of data
-                    </p>
-                    <a href="{{ route('checkout') }}" class="btn btn-outline-primary"><i
-                        class="tf-icons bx bx-cart-alt me-1"></i>Subscribe Now</a><span
-                      style="float: right; font-size: 20px; font-weight: 700;">$75</span>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6 col-lg-4 mb-3">
-                <div class="card h-100">
-                  <img class="card-img-top" src="{{ asset('assets/img/elements/4.jpg') }}" alt="Card image cap" />
-                  <div class="card-body">
-                    <h5 class="card-title">Diamond Plan</h5>
-                    <p class="card-text">
-                      20 peoples of data
-                    </p>
-                    <a href="{{ route('checkout') }}" class="btn btn-outline-primary"><i
-                        class="tf-icons bx bx-cart-alt me-1"></i>Subscribe Now</a><span
-                      style="float: right; font-size: 20px; font-weight: 700;">$99</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            @endif
+
           </div>
           <!-- Examples -->
 

@@ -38,8 +38,8 @@ class PlanController extends Controller
      */
     public function store(PlanRequest $request)
     {
-        $data = $request->validated();
-        $this->planService->createOrUpdate($data);
+
+        $this->planService->createOrUpdate($request);
 
         return back()->with('success', 'Plan created successfully.');
     }
@@ -65,9 +65,7 @@ class PlanController extends Controller
      */
     public function update(PlanRequest $request, Plan $plan)
     {
-        $data = $request->validated();
-
-        $this->planService->createOrUpdate($data, $plan->id);
+        $this->planService->createOrUpdate($request, $plan->id);
 
         return redirect()->route('admin.plans.index')->with('success', 'Plan updated successfully.');
     }

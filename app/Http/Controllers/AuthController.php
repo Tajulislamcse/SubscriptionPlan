@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 use App\Models\User;
-use App\Mail\LoginOTPMail;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Http\Request;
 use App\Models\UserOTP;
+use App\Mail\LoginOTPMail;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\RegisterRequest;
+use Illuminate\Auth\Events\Registered;
 
 
 class AuthController extends Controller
@@ -19,19 +21,34 @@ class AuthController extends Controller
     {
         return view('user.register');
     }
-    public function register(RegisterRequest $request)
+   public function register(RegisterRequest $request)
     {
- 
-        $user = User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'phone' => $request->phone,
-        'password' => Hash::make($request->password),
-        ]);
+        try {
+            DB::beginTransaction();
 
-        event(new Registered($user)); // send verification mail
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'password' => Hash::make($request->password),
+            ]);
 
-        return back()->with('success', 'Registration successful. Please check your email for verification.');
+            // This triggers the verification email
+            event(new Registered($user));
+
+            DB::commit();
+
+            return back()->with('success', 'Registration successful. Please check your email for verification.');
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            // Log the error for debugging
+            Log::error('Registration failed: '.$e->getMessage());
+
+            // Show friendly error message to the user
+            return back()->withInput()->with('error','Registration failed. Please try again later.');
+        }
     }
     public function showLoginForm()
     {
@@ -88,7 +105,7 @@ class AuthController extends Controller
             return redirect()->route('otp.verify.form');
         }else{
             return back()
-            ->withInput($request->only('email'))
+            ->withInput()
             ->with('error', 'Invalid email or password');
 
         }
@@ -149,6 +166,12 @@ class AuthController extends Controller
     }
     public function logout(Request $request)
     {
+      if(Auth::guard('admin')->check()){
+            Auth::guard('admin')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/admin/login');
+        }
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

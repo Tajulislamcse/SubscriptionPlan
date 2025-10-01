@@ -117,6 +117,11 @@
                             {{ session('success') }}
                         </div>
                     @endif
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
                     <form id="formAuthentication" class="mb-3" action="{{ route('register') }}" method="POST">
                         @csrf
 
@@ -156,7 +161,7 @@
                             @enderror
                         </div>
 
-                        
+
 
                         <div class="mb-3">
                             <div class="form-check">

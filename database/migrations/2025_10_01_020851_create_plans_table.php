@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('plans', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->string('image')->nullable();
             $table->decimal('price');
             $table->unsignedInteger('data_limit'); // 5,10,20
             $table->unsignedInteger('duration_days');

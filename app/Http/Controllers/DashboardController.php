@@ -15,6 +15,13 @@ class DashboardController extends Controller
             $users = User::paginate(10);
             return view('admin.dashboard',compact('users'));
         }
-        return view('user.dashboard');
+         $user = auth()->user();
+        if ($user->plans()->exists()) {
+            $userPlans = $user->plans()->withPivot('start_date', 'end_date', 'status')->get();
+            return view('user.dashboard', compact('userPlans'));
+        } else {
+            $allPlans = \App\Models\Plan::all();
+        }
+        return view('user.dashboard', compact('allPlans'));
     }
 }

@@ -27,6 +27,7 @@ class PlanRequest extends FormRequest
             'name' => [
                 'required', 'string', Rule::unique('plans', 'name')->ignore($planId),
             ],
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'price' => 'required|numeric|min:0',
             'duration_days' => 'required|integer|min:1',
             'data_limit' => 'required|integer|min:1',
