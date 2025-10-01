@@ -17,6 +17,7 @@ return new class extends Migration
             $table->decimal('price');
             $table->unsignedInteger('data_limit'); // 5,10,20
             $table->unsignedInteger('duration_days');
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

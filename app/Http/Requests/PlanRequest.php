@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PlanRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class PlanRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +22,15 @@ class PlanRequest extends FormRequest
      */
     public function rules(): array
     {
+        $planId = $this->route('plan');
         return [
-            //
+            'name' => [
+                'required', 'string', Rule::unique('plans', 'name')->ignore($planId),
+            ],
+            'price' => 'required|numeric|min:0',
+            'duration_days' => 'required|integer|min:1',
+            'data_limit' => 'required|integer|min:1',
+            'is_active' => 'nullable|boolean',
         ];
     }
 }

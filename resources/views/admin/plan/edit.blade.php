@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Create Plan')
+@section('title', 'Edit Plan')
 
 @section('content')
 <div class="container-xxl flex-grow-1 container-p-y">
-    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Plans /</span> Create Plan</h4>
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Plans /</span> Edit Plan</h4>
 
     <div class="row">
         <div class="col-md-12">
             <div class="card mb-4">
-                <h5 class="card-header">New Plan Details</h5>
+                <h5 class="card-header">Edit Plan Details</h5>
                 <div class="card-body">
                     @if ($errors->any())
                         <div class="alert alert-danger">
@@ -25,14 +25,15 @@
                             {{ session('success') }}
                         </div>
                     @endif
-                    <form action="{{ route('admin.plans.store') }}" method="POST">
+                    <form action="{{ route('admin.plans.update', $plan->id) }}" method="POST">
                         @csrf
+                        @method('PUT')
 
                         <div class="mb-3 row">
                             <label for="name" class="col-md-2 col-form-label">Plan Name</label>
                             <div class="col-md-10">
                                 <input type="text" class="form-control" id="name" name="name"
-                                    value="{{ old('name') }}" placeholder="Enter plan name" required>
+                                    value="{{ old('name', $plan->name) }}" placeholder="Enter plan name" required>
                             </div>
                         </div>
 
@@ -40,7 +41,7 @@
                             <label for="price" class="col-md-2 col-form-label">Price ($)</label>
                             <div class="col-md-10">
                                 <input type="number" step="0.01" class="form-control" id="price" name="price"
-                                    value="{{ old('price') }}" placeholder="Enter plan price" required>
+                                    value="{{ old('price', $plan->price) }}" placeholder="Enter plan price" required>
                             </div>
                         </div>
 
@@ -48,7 +49,7 @@
                             <label for="duration_days" class="col-md-2 col-form-label">Duration (Days)</label>
                             <div class="col-md-10">
                                 <input type="number" class="form-control" id="duration_days" name="duration_days"
-                                    value="{{ old('duration_days') }}" placeholder="Enter duration in days" required>
+                                    value="{{ old('duration_days', $plan->duration_days) }}" placeholder="Enter duration in days" required>
                             </div>
                         </div>
 
@@ -56,7 +57,7 @@
                             <label for="data_limit" class="col-md-2 col-form-label">Data Limit</label>
                             <div class="col-md-10">
                                 <input type="number" class="form-control" id="data_limit" name="data_limit"
-                                    value="{{ old('data_limit') }}" placeholder="Enter data limit (e.g., 5, 10, 20)" required>
+                                    value="{{ old('data_limit', $plan->data_limit) }}" placeholder="Enter data limit (e.g., 5, 10, 20)" required>
                             </div>
                         </div>
 
@@ -66,7 +67,7 @@
                                 <div class="form-check form-switch">
                                     <input type="hidden" name="is_active" value="0">
                                     <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="1"
-                                        {{ old('is_active', 1) ? 'checked' : '' }}>
+                                        {{ old('is_active', $plan->is_active) ? 'checked' : '' }}>
                                     <label class="form-check-label" for="is_active">Active</label>
                                 </div>
                             </div>

@@ -4,15 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\Plan;
 use Illuminate\Http\Request;
+use App\Services\PlanService;
+use App\Http\Requests\PlanRequest;
+
 
 class PlanController extends Controller
 {
+    public $planService;
+    public function __construct(PlanService $planService)
+    {
+        $this->planService = $planService;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $plans = Plan::paginate(10);
+        return view('admin.plan.index', compact('plans'));
     }
 
     /**
@@ -20,15 +29,19 @@ class PlanController extends Controller
      */
     public function create()
     {
-        //
+
+        return view('admin.plan.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PlanRequest $request)
     {
-        //
+        $data = $request->validated();
+        $this->planService->createOrUpdate($data);
+
+        return back()->with('success', 'Plan created successfully.');
     }
 
     /**
@@ -44,15 +57,19 @@ class PlanController extends Controller
      */
     public function edit(Plan $plan)
     {
-        //
+        return view('admin.plan.edit', compact('plan'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Plan $plan)
+    public function update(PlanRequest $request, Plan $plan)
     {
-        //
+        $data = $request->validated();
+
+        $this->planService->createOrUpdate($data, $plan->id);
+
+        return redirect()->route('admin.plans.index')->with('success', 'Plan updated successfully.');
     }
 
     /**
@@ -60,6 +77,7 @@ class PlanController extends Controller
      */
     public function destroy(Plan $plan)
     {
-        //
+        $plan->delete();
+        return back()->with('success', 'Plan deleted successfully.');
     }
 }
