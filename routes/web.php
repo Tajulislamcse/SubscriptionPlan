@@ -14,6 +14,7 @@ use App\Http\Controllers\SubscriptionController;
 Route::get('/', function () {
     return redirect()->route('login');
 });
+Route::get('logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
 
 Route::get('/login',[AuthController::class,'showLoginForm'])->name('login');
 Route::post('/login',[AuthController::class,'login'])->name('login.submit');
@@ -25,13 +26,16 @@ Route::get('/otp/verify', function () {
 })->name('otp.verify.form');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::post('/otp/verify', [AuthController::class, 'verifyOtp'])->name('otp.verify');
-Route::get('/data', [DataController::class, 'index'])->name('data');
+// Route::get('/data', [DataController::class, 'index'])->name('data');
 Route::get('/checkout/{plan}', [CheckoutController::class, 'index'])->name('checkout');
 Route::get('/checkout/process/{plan}', [CheckoutController::class, 'process'])->name('checkout.process');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('thank-you', [CheckoutController::class, 'success'])->name('thank-you');
 Route::group(['middleware' => ['auth', 'prevent-back-history', 'verified']], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/create-checkout-session', [CheckoutController::class, 'createCheckoutSession'])->name('stripe.create_session');
 });
+
 Route::prefix('admin')->name('admin.')->group(function () {
     // Admin login routes
     Route::get('/login', [AuthController::class, 'showAdminLoginForm'])->name('login');
@@ -41,10 +45,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Protected admin routes
     Route::middleware(['auth:admin', 'prevent-back-history'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        Route::get('/users', [AdminController::class, 'users'])->name('users.index');
+        // Route::get('/users', [AdminController::class, 'users'])->name('users.index');
         Route::resource('plans', PlanController::class);
-        Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
-        Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
+        // Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+        // Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
     });
 });
 

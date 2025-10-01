@@ -46,11 +46,23 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
-    // User.php
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+ 
+    public function activeSubscription()
+    {
+        return $this->hasOne(Subscription::class)->where('status', 'active');
+    }
+
+    // Optional: Get all plans user has subscribed to (through subscriptions)
     public function plans()
     {
         return $this->belongsToMany(Plan::class, 'subscriptions')
-                    ->withPivot(['start_date','end_date','status','gateway_response'])
+                    ->withPivot(['starts_at','ends_at','status','gateway_response'])
                     ->withTimestamps();
     }
 

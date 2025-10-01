@@ -74,8 +74,11 @@
             </div>
 
           <div class="col-md-12 col-lg-12">
-                  <a href="javascript:void(0)" class="btn btn-primary"><i class="tf-icons bx bx-cart-alt me-1"></i>Buy
-                    Now</a>
+                  <button type="button" class="btn btn-primary" id="payNowBtn"><i class="tf-icons bx bx-cart-alt me-1"></i>Buy
+                    Now</button>
+            </div>
+            <div id="checkout" class="mt-4" style="display: none;">
+                <!-- Stripe Embedded Checkout will mount here -->
             </div>
         </form>
       </div>
@@ -84,3 +87,51 @@
   </div>
 </div>
 @endsection
+@push('scripts')
+<script src="https://js.stripe.com/basil/stripe.js"></script>
+<script>
+    const stripe = Stripe('{{ config('stripe.key') }}');
+
+    document.getElementById('payNowBtn').addEventListener('click', async () => {
+        const email = document.querySelector('input[name="email"]').value;
+        if (!email) {
+            alert('Please enter your email address.');
+            return;
+        }
+
+        const user_name = document.querySelector('input[name="full_name"]').value;
+        const phone = document.querySelector('input[name="phone"]').value;
+        const address = document.querySelector('textarea[name="address"]').value;
+
+        document.getElementById('payNowBtn').style.display = 'none';
+        document.getElementById('checkout').style.display = 'block';
+
+
+        const fetchClientSecret = async () => {
+            const response = await fetch("/create-checkout-session", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    plan_id: "{{ $plan->id }}",
+                    user_name: user_name,
+                    email: email,
+                    phone: phone,
+                    address: address
+                })
+            });
+
+            const { clientSecret } = await response.json();
+            return clientSecret;
+        };
+
+        const checkout = await stripe.initEmbeddedCheckout({
+            fetchClientSecret
+        });
+
+        checkout.mount("#checkout");
+    });
+</script>
+@endpush
